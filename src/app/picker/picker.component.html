@@ -14,6 +14,5 @@
   </div>
 </div>
 <div *ngIf="sliders$ |async as sliders">
-  {{sliders.R}}
-<div class="color" [style]="color$ |async"></div>
+  <div class="color" #colorsliders></div>
 </div>

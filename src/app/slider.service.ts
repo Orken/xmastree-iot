@@ -21,8 +21,7 @@ export class SliderService {
       ...slider,
       [channel]: x
     });
-    this._color$.next('background-color: rgb(' + slider.R + ', ' + slider.G + ', ' + slider.B + ')');
-    console.log(x, channel);
+    this._color$.next('rgb(' + slider.R + ', ' + slider.G + ', ' + slider.B + ')');
   }
 
 }
