@@ -4,8 +4,9 @@ export class Sliders {
   B: number;
 
   constructor() {
-    this.R = 128;
+    this.R = 64;
     this.G = 128;
-    this.B = 128;
+    this.B = 192;
   }
+
 }

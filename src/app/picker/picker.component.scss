@@ -1,7 +1,12 @@
+.sliders {
+  width: 80%;
+  margin: auto;
+}
+
 .slider-wrapper {
   width: 100%;
-  margin: auto;
-  height: 48px;
+  //margin: auto;
+  height: 64px;
   border: solid 2px black;
   margin-bottom: 8px;
   position: relative;
@@ -19,10 +24,9 @@
       z-index: 8;
     }
   }
-
   .red {
     &:after {
-      background: linear-gradient(to right, #000000 0%, #ff0000 100%);
+      background: linear-gradient(to right, hsl(0, 100%, 50%) 0%, hsl(60, 100%, 50%) 16%, hsl(120, 100%, 50%) 33%, hsl(180, 100%, 50%) 50%, hsl(240, 100%, 50%) 66%, hsl(300, 100%, 50%) 83%, hsl(360, 100%, 50%) 100%);
     }
   }
   .green {
@@ -37,10 +41,13 @@
   }
   .pointer {
     position: absolute;
-    border: solid 1px white;
+    border: solid 2px white;
     left: 50%;
-    width: 0;
-    height: 46px;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
     z-index: 9;
     pointer-events: none;
 
@@ -48,8 +55,8 @@
 }
 
 .color {
-  width:50%;
-  height:100px;
-  margin:auto;
-  border:solid 1px black;
+  width: 80%;
+  height: 200px;
+  margin: auto;
+  border: solid 1px black;
 }

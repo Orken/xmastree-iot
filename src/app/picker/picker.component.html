@@ -2,15 +2,15 @@
   {{ sliders$ |async | json}}
   <div class="slider-wrapper" (mousedown)="setColorByMouse($event, 'R')" (touchstart)="setColorByTouch($event, 'R')">
     <div class="slider red"></div>
-    <div class="pointer"></div>
+    <div class="pointer" #r></div>
   </div>
   <div class="slider-wrapper" (mousedown)="setColorByMouse($event, 'G')" (touchstart)="setColorByTouch($event, 'G')">
     <div class="slider green"></div>
-    <div class="pointer"></div>
+    <div class="pointer" #g></div>
   </div>
   <div class="slider-wrapper" (mousedown)="setColorByMouse($event, 'B')" (touchstart)="setColorByTouch($event, 'B')">
     <div class="slider blue"></div>
-    <div class="pointer"></div>
+    <div class="pointer" #b></div>
   </div>
 </div>
 <div *ngIf="sliders$ |async as sliders">

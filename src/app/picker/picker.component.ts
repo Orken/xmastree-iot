@@ -1,8 +1,8 @@
-import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {fromEvent, Observable, Subject} from 'rxjs/index';
-import {map, takeUntil, tap} from 'rxjs/internal/operators';
-import {SliderService} from '../slider.service';
-import {Sliders} from './sliders';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { fromEvent, Observable, Subject } from 'rxjs/index';
+import { map, takeUntil, tap } from 'rxjs/internal/operators';
+import { SliderService } from '../slider.service';
+import { Sliders } from './sliders';
 
 @Component({
   selector: 'app-picker',
@@ -15,9 +15,15 @@ export class PickerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   sliders$: Observable<Sliders> = this.sliderService.sliders$;
   colorsliders$: Observable<string> = this.sliderService.color$;
+  r$: Observable<number> = this.sliderService.r$;
+  g$: Observable<number> = this.sliderService.g$;
+  b$: Observable<number> = this.sliderService.b$;
 
   @ViewChild('sliders') sliders: ElementRef;
   @ViewChild('colorsliders') colorsliders: ElementRef;
+  @ViewChild('r') r: ElementRef;
+  @ViewChild('g') g: ElementRef;
+  @ViewChild('b') b: ElementRef;
 
   constructor(public sliderService: SliderService) {
   }
@@ -27,10 +33,11 @@ export class PickerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     this.colorsliders$.pipe(
-      tap((x) => {
-        this.colorsliders.nativeElement.style.backgroundColor = x;
-      })
+      tap(x => this.colorsliders.nativeElement.style.backgroundColor = x)
     ).subscribe();
+    this.r$.subscribe(r => this.r.nativeElement.style.left = (100 * r / 255) + '%');
+    this.g$.subscribe(g => this.g.nativeElement.style.left = (100 * g / 255) + '%');
+    this.b$.subscribe(b => this.b.nativeElement.style.left = (100 * b / 255) + '%');
   }
 
   ngOnDestroy(): void {
@@ -50,7 +57,10 @@ export class PickerComponent implements OnInit, AfterViewInit, OnDestroy {
     console.log(event);
     const mouseMove = fromEvent(event.target, moveEventName);
     const mouseUp = fromEvent(document, upEventName);
-    const {left: offsetX, width} = this.sliders.nativeElement.getBoundingClientRect();
+    const { left: offsetX, width } = this.sliders.nativeElement.getBoundingClientRect();
+    console.log(offsetX, width);
+    const currentX = (Math.round(255 * (getX(event) - offsetX) / width));
+    this.sliderService.setX(currentX, channel);
 
     mouseMove.pipe(
       takeUntil(mouseUp),
