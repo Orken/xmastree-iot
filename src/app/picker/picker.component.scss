@@ -1,14 +1,15 @@
+
 .sliders {
-  width: 80%;
+  width: 100%;
   margin: auto;
 }
 
 .slider-wrapper {
   width: 100%;
   //margin: auto;
-  height: 64px;
-  border: solid 2px black;
-  margin-bottom: 8px;
+  height: 128px;
+  border: none; //solid 2px black;
+  margin-bottom: 0px;
   position: relative;
   z-index: 10;
   .slider {
@@ -29,15 +30,15 @@
       background: linear-gradient(to right, hsl(0, 100%, 50%) 0%, hsl(60, 100%, 50%) 16%, hsl(120, 100%, 50%) 33%, hsl(180, 100%, 50%) 50%, hsl(240, 100%, 50%) 66%, hsl(300, 100%, 50%) 83%, hsl(360, 100%, 50%) 100%);
     }
   }
-  .green {
+  .green {/*
     &:after {
       background: linear-gradient(to right, #000000 0%, #00ff00 100%);
-    }
+    }*/
   }
-  .blue {
+  .blue {/*
     &:after {
       background: linear-gradient(to right, #000000 0%, #0000ff 100%);
-    }
+    }*/
   }
   .pointer {
     position: absolute;
@@ -55,7 +56,7 @@
 }
 
 .color {
-  width: 80%;
+  width: 100%;
   height: 200px;
   margin: auto;
   border: solid 1px black;

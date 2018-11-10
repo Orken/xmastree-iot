@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } fr
 import { fromEvent, Observable, Subject } from 'rxjs/index';
 import { map, takeUntil, tap } from 'rxjs/internal/operators';
 import { SliderService } from '../slider.service';
-import { Sliders } from './sliders';
+import { Sliders, hsl, hexa } from './sliders';
 
 @Component({
   selector: 'app-picker',
@@ -14,16 +14,17 @@ export class PickerComponent implements OnInit, AfterViewInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   sliders$: Observable<Sliders> = this.sliderService.sliders$;
-  colorsliders$: Observable<string> = this.sliderService.color$;
-  r$: Observable<number> = this.sliderService.r$;
-  g$: Observable<number> = this.sliderService.g$;
-  b$: Observable<number> = this.sliderService.b$;
+  h$: Observable<number> = this.sliderService.h$;
+  s$: Observable<number> = this.sliderService.s$;
+  v$: Observable<number> = this.sliderService.v$;
 
   @ViewChild('sliders') sliders: ElementRef;
   @ViewChild('colorsliders') colorsliders: ElementRef;
-  @ViewChild('r') r: ElementRef;
-  @ViewChild('g') g: ElementRef;
-  @ViewChild('b') b: ElementRef;
+  @ViewChild('sslider') sslider: ElementRef;
+  @ViewChild('vslider') vslider: ElementRef;
+  @ViewChild('h') h: ElementRef;
+  @ViewChild('s') s: ElementRef;
+  @ViewChild('v') v: ElementRef;
 
   constructor(public sliderService: SliderService) {
   }
@@ -32,12 +33,32 @@ export class PickerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.colorsliders$.pipe(
-      tap(x => this.colorsliders.nativeElement.style.backgroundColor = x)
+    this.sliders$.pipe(
+      tap(x => {
+        this.colorsliders.nativeElement.style.backgroundColor = hsl(x);
+        const sstart = hsl(<Sliders>{
+          ...x,
+          S: 0
+        });
+        const vstart = hsl(<Sliders>{
+          ...x,
+          V: 0
+        });
+        const send = hsl(<Sliders>{
+          ...x,
+          S: 1
+        });
+        const vend = hsl(<Sliders>{
+          ...x,
+          V: 1
+        });
+        this.sslider.nativeElement.style.background = `linear-gradient(to right, ${sstart} 0%, ${send} 100%)`;
+        this.vslider.nativeElement.style.background = `linear-gradient(to right, ${vstart} 0%, ${vend} 100%)`;
+      })
     ).subscribe();
-    this.r$.subscribe(r => this.r.nativeElement.style.left = (100 * r / 255) + '%');
-    this.g$.subscribe(g => this.g.nativeElement.style.left = (100 * g / 255) + '%');
-    this.b$.subscribe(b => this.b.nativeElement.style.left = (100 * b / 255) + '%');
+    this.h$.subscribe(h => this.h.nativeElement.style.left = (100 * h) + '%');
+    this.s$.subscribe(s => this.s.nativeElement.style.left = (100 * s) + '%');
+    this.v$.subscribe(v => this.v.nativeElement.style.left = (100 * v) + '%');
   }
 
   ngOnDestroy(): void {
@@ -54,23 +75,22 @@ export class PickerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private setColor(event: Event, moveEventName: string, upEventName: string, getX: (e: Event) => number, channel: string): void {
-    console.log(event);
     const mouseMove = fromEvent(event.target, moveEventName);
     const mouseUp = fromEvent(document, upEventName);
     const { left: offsetX, width } = this.sliders.nativeElement.getBoundingClientRect();
-    console.log(offsetX, width);
-    const currentX = (Math.round(255 * (getX(event) - offsetX) / width));
+    const currentX = ( (getX(event) - offsetX) / width);
     this.sliderService.setX(currentX, channel);
 
     mouseMove.pipe(
       takeUntil(mouseUp),
       takeUntil(this.destroy$),
       map(getX),
-      map(x => (Math.round(255 * (x - offsetX) / width))),
-      map(x => Math.min(255, Math.max(0, x))),
+      map(x => ((x - offsetX) / width)),
+      map(x => Math.min(1, Math.max(0, x))),
       tap(x => this.sliderService.setX(x, channel))
     ).subscribe();
 
   }
+
 
 }
