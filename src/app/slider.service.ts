@@ -29,7 +29,8 @@ export class SliderService {
     distinctUntilChanged()
   );
   private _socket$ = new WebSocketSubject<string>({
-    url: SERVER_URL
+    url: SERVER_URL,
+    serializer: (msg: string) => msg
   });
   readonly socket$ = this._socket$.asObservable();
 
@@ -38,10 +39,13 @@ export class SliderService {
     // this._socket$ = WebSocketSubject.create(SERVER_URL);
     this.socket$.subscribe(
       (data) => {
-        const hsv = data as Sliders;
-        console.log(data.message);
-        if (!data.message) {
-          this._sliders$.next(<Sliders>hsv);
+        const hsv = this.hexToRgb((data as Socket).value);
+        if (hsv) {
+          this._sliders$.next(<Sliders>{
+            H: hsv.r / 255,
+            S: hsv.g / 255,
+            V: hsv.b / 255
+          });
         }
       }
     );
@@ -55,8 +59,8 @@ export class SliderService {
       ...this._sliders$.getValue(),
       [channel]: x
     };
-    this._sliders$.next(<Sliders>slider);
-    this._socket$.next(JSON.stringify(slider));
+    // this._sliders$.next(<Sliders>slider);
+    this._socket$.next(hexa(slider));
   }
 
   hexToRgb(hex) {
