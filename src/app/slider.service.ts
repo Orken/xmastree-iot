@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { Sliders, hexa } from './picker/sliders';
+import { BehaviorSubject, fromEvent } from 'rxjs';
+import { Sliders, hexa, Socket } from './picker/sliders';
 import * as socketIo from 'socket.io-client';
 import { distinctUntilChanged, distinctUntilKeyChanged, map } from 'rxjs/internal/operators';
+import { WebSocketSubject } from 'rxjs/internal/observable/dom/WebSocketSubject';
 
 
 const SERVER_URL = 'ws://192.168.10.21:81';
@@ -27,19 +28,27 @@ export class SliderService {
     map(slider => slider.V),
     distinctUntilChanged()
   );
-  private socket;
+  private _socket$ = new WebSocketSubject<string>({
+    url: SERVER_URL
+  });
+  readonly socket$ = this._socket$.asObservable();
 
   constructor() {
-    this.socket = new WebSocket(SERVER_URL);
-    this.socket.onopen = (event) => {
-      console.log('open');
-    };
-    this.socket.onerror = function (event) {
-      console.log('error');
-      this.socket.send('#FF0000');
-    };
+    // this.socket = new WebSocket(SERVER_URL);
+    // this._socket$ = WebSocketSubject.create(SERVER_URL);
+    this.socket$.subscribe(
+      (data) => {
+        const hsv = data as Sliders;
+        console.log(data.message);
+        if (!data.message) {
+          this._sliders$.next(<Sliders>hsv);
+        }
+      }
+    );
   }
 
+  public sendMessage(text: string) {
+  }
 
   setX(x, channel) {
     const slider = <Sliders>{
@@ -47,7 +56,16 @@ export class SliderService {
       [channel]: x
     };
     this._sliders$.next(<Sliders>slider);
-    this.socket.send(hexa(slider));
+    this._socket$.next(JSON.stringify(slider));
+  }
+
+  hexToRgb(hex) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : null;
   }
 
 

@@ -4,11 +4,15 @@ export class Sliders {
   V: number;
 
   constructor() {
-    this.H = 0.0;
-    this.S = 0;
-    this.V = 0;
+    this.H = 0.5;
+    this.S = 0.5;
+    this.V = 0.5;
   }
+}
 
+export class Socket {
+  value?: number;
+  message?: string;
 }
 
 const hsl = (slider: Sliders): string => {
@@ -30,7 +34,7 @@ const int2hex = (number: number): string => {
   }
   return s;
 }
-export { hsl, hexa};
+export { hsl, hexa };
 
 
 

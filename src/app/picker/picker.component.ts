@@ -17,11 +17,12 @@ export class PickerComponent implements OnInit, AfterViewInit, OnDestroy {
   h$: Observable<number> = this.sliderService.h$;
   s$: Observable<number> = this.sliderService.s$;
   v$: Observable<number> = this.sliderService.v$;
+  socket$: Observable<string> = this.sliderService.socket$;
 
   @ViewChild('sliders') sliders: ElementRef;
   @ViewChild('colorsliders') colorsliders: ElementRef;
-  @ViewChild('sslider') sslider: ElementRef;
-  @ViewChild('vslider') vslider: ElementRef;
+  @ViewChild('s_slider') s_slider: ElementRef;
+  @ViewChild('v_slider') v_slider: ElementRef;
   @ViewChild('h') h: ElementRef;
   @ViewChild('s') s: ElementRef;
   @ViewChild('v') v: ElementRef;
@@ -32,28 +33,32 @@ export class PickerComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
   }
 
+
   ngAfterViewInit() {
+    this.socket$.subscribe((data) => {
+      console.log(data);
+    });
     this.sliders$.pipe(
       tap(x => {
         this.colorsliders.nativeElement.style.backgroundColor = hsl(x);
-        const sstart = hsl(<Sliders>{
+        const s_start = hsl(<Sliders>{
           ...x,
           S: 0
         });
-        const vstart = hsl(<Sliders>{
+        const v_start = hsl(<Sliders>{
           ...x,
           V: 0
         });
-        const send = hsl(<Sliders>{
+        const s_end = hsl(<Sliders>{
           ...x,
           S: 1
         });
-        const vend = hsl(<Sliders>{
+        const v_end = hsl(<Sliders>{
           ...x,
           V: 1
         });
-        this.sslider.nativeElement.style.background = `linear-gradient(to right, ${sstart} 0%, ${send} 100%)`;
-        this.vslider.nativeElement.style.background = `linear-gradient(to right, ${vstart} 0%, ${vend} 100%)`;
+        this.s_slider.nativeElement.style.background = `linear-gradient(to right, ${s_start} 0%, ${s_end} 100%)`;
+        this.v_slider.nativeElement.style.background = `linear-gradient(to right, ${v_start} 0%, ${v_end} 100%)`;
       })
     ).subscribe();
     this.h$.subscribe(h => this.h.nativeElement.style.left = (100 * h) + '%');
