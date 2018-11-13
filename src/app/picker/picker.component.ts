@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { fromEvent, Observable, Subject } from 'rxjs/index';
-import { map, takeUntil, tap } from 'rxjs/internal/operators';
+import {debounceTime, map, takeUntil, tap, throttleTime} from 'rxjs/internal/operators';
 import { SliderService } from '../slider.service';
 import { Sliders, hsl, hexa } from './sliders';
 
@@ -35,8 +35,9 @@ export class PickerComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   ngAfterViewInit() {
-    this.socket$.subscribe((data) => {
-      console.log(data);
+    this.socket$
+      // .pipe(throttleTime(300))
+      .subscribe((data) => {
     });
     this.sliders$.pipe(
       tap(x => {

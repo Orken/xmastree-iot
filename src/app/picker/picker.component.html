@@ -1,4 +1,6 @@
 <div class="sliders" #sliders>
+  <div class='circle' (mousedown)="setColorByMouse($event, 'H')" (touchstart)="setColorByTouch($event, 'H')"></div>
+
   <div class="slider-wrapper" (mousedown)="setColorByMouse($event, 'H')" (touchstart)="setColorByTouch($event, 'H')">
     <div class="slider red"></div>
     <div class="pointer" #h></div>

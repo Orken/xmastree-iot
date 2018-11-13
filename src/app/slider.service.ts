@@ -1,12 +1,12 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, fromEvent } from 'rxjs';
-import { Sliders, hexa, Socket } from './picker/sliders';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject, fromEvent} from 'rxjs';
+import {Sliders, hexa, Socket} from './picker/sliders';
 import * as socketIo from 'socket.io-client';
-import { distinctUntilChanged, distinctUntilKeyChanged, map } from 'rxjs/internal/operators';
-import { WebSocketSubject } from 'rxjs/internal/observable/dom/WebSocketSubject';
+import {auditTime, debounceTime, distinctUntilChanged, distinctUntilKeyChanged, map, throttleTime} from 'rxjs/internal/operators';
+import {WebSocketSubject} from 'rxjs/internal/observable/dom/WebSocketSubject';
 
 
-const SERVER_URL = 'ws://192.168.10.21:81';
+const SERVER_URL = 'ws://echo.websocket.org';
 
 @Injectable({
   providedIn: 'root'
@@ -32,24 +32,25 @@ export class SliderService {
     url: SERVER_URL,
     serializer: (msg: string) => msg
   });
-  readonly socket$ = this._socket$.asObservable();
+  readonly socket$ = this._socket$
+    .asObservable();
 
   constructor() {
     // this.socket = new WebSocket(SERVER_URL);
     // this._socket$ = WebSocketSubject.create(SERVER_URL);
-    this.socket$.subscribe(
-      (data) => {
-        console.log(data);
-        const hsv = this.hexToRgb((data as Socket).value);
-        if (hsv) {
-          this._sliders$.next(<Sliders>{
-            H: hsv.r / 255,
-            S: hsv.g / 255,
-            V: hsv.b / 255
-          });
+    this.sliders$
+      .pipe(
+        auditTime(250)
+      )
+      .subscribe(
+        (data) => {
+          console.log(data);
+          const slider = (data as Sliders);
+          if (slider.H) {
+            this._socket$.next(JSON.stringify(slider));
+          }
         }
-      }
-    );
+      );
   }
 
   public sendMessage(text: string) {
@@ -60,8 +61,7 @@ export class SliderService {
       ...this._sliders$.getValue(),
       [channel]: x
     };
-    // this._sliders$.next(<Sliders>slider);
-    this._socket$.next(hexa(slider));
+    this._sliders$.next(<Sliders>slider);
   }
 
   hexToRgb(hex) {
