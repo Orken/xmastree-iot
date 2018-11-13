@@ -1,20 +1,24 @@
-<div class="sliders" #sliders>
-  <div class='circle' (mousedown)="setColorByMouse($event, 'H')" (touchstart)="setColorByTouch($event, 'H')"></div>
-
-  <div class="slider-wrapper" (mousedown)="setColorByMouse($event, 'H')" (touchstart)="setColorByTouch($event, 'H')">
-    <div class="slider red"></div>
+<div class="sliders" >
+  <div
+    class='circleH'
+    #sliders
+    (mousedown)="setColorByMouse($event, 'H')"
+    (touchstart)="setColorByTouch($event, 'H')"
+  >
     <div class="pointer" #h></div>
   </div>
-  <div class="slider-wrapper" (mousedown)="setColorByMouse($event, 'S')" (touchstart)="setColorByTouch($event, 'S')">
-    <div class="slider green" #s_slider></div>
+  <div
+    class='circleSV'
+    #sliders
+    (mousedown)="setColorByMouse($event, 'S')"
+    (touchstart)="setColorByTouch($event, 'S')"
+  >
     <div class="pointer" #s></div>
   </div>
-  <div class="slider-wrapper" (mousedown)="setColorByMouse($event, 'V')" (touchstart)="setColorByTouch($event, 'V')">
-    <div class="slider blue" #v_slider></div>
+  <div
+    class='color'
+    #color
+  >
     <div class="pointer" #v></div>
   </div>
 </div>
-<div *ngIf="sliders$ |async as sliders">
-  <div class="color" #colorsliders></div>
-</div>
-{{ (socket$ | async) | json }}

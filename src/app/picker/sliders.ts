@@ -5,8 +5,8 @@ export class Sliders {
 
   constructor() {
     this.H = 0.5;
-    this.S = 0.5;
-    this.V = 0.5;
+    this.S = 1;
+    this.V = 1;
   }
 }
 
@@ -16,7 +16,7 @@ export class Socket {
 }
 
 const hsl = (slider: Sliders): string => {
-  return `hsl(${360 * slider.H}, ${100 * slider.S}%, ${50 * slider.V }%)`;
+  return `hsl(${slider.H}, ${100 * slider.S}%, ${50 * slider.V }%)`;
 }
 
 const hexa = (slider: Sliders): string => {

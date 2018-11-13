@@ -1,9 +1,16 @@
-import {Injectable} from '@angular/core';
-import {BehaviorSubject, fromEvent} from 'rxjs';
-import {Sliders, hexa, Socket} from './picker/sliders';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, fromEvent } from 'rxjs';
+import { Sliders, hexa, Socket } from './picker/sliders';
 import * as socketIo from 'socket.io-client';
-import {auditTime, debounceTime, distinctUntilChanged, distinctUntilKeyChanged, map, throttleTime} from 'rxjs/internal/operators';
-import {WebSocketSubject} from 'rxjs/internal/observable/dom/WebSocketSubject';
+import {
+  auditTime,
+  debounceTime,
+  distinctUntilChanged,
+  distinctUntilKeyChanged,
+  map,
+  throttleTime
+} from 'rxjs/internal/operators';
+import { WebSocketSubject } from 'rxjs/internal/observable/dom/WebSocketSubject';
 
 
 const SERVER_URL = 'ws://echo.websocket.org';
@@ -40,11 +47,10 @@ export class SliderService {
     // this._socket$ = WebSocketSubject.create(SERVER_URL);
     this.sliders$
       .pipe(
-        auditTime(250)
+        auditTime(500)
       )
       .subscribe(
         (data) => {
-          console.log(data);
           const slider = (data as Sliders);
           if (slider.H) {
             this._socket$.next(JSON.stringify(slider));
@@ -56,7 +62,32 @@ export class SliderService {
   public sendMessage(text: string) {
   }
 
+  setAngle(angle, channel) {
+    if (channel !== 'H') {
+      if (angle > 180) {
+        angle = angle - 180;
+        channel = 'V';
+      } else {
+        channel = 'S';
+      }
+      angle = angle / 180;
+    }
+    const slider = <Sliders>{
+      ...this._sliders$.getValue(),
+      [channel]: angle
+    };
+    this._sliders$.next(<Sliders>slider);
+  }
+
   setX(x, channel) {
+    const slider = <Sliders>{
+      ...this._sliders$.getValue(),
+      [channel]: x
+    };
+    this._sliders$.next(<Sliders>slider);
+  }
+
+  setXY(x, y, channel) {
     const slider = <Sliders>{
       ...this._sliders$.getValue(),
       [channel]: x
