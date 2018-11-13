@@ -39,6 +39,7 @@ export class SliderService {
     // this._socket$ = WebSocketSubject.create(SERVER_URL);
     this.socket$.subscribe(
       (data) => {
+        console.log(data);
         const hsv = this.hexToRgb((data as Socket).value);
         if (hsv) {
           this._sliders$.next(<Sliders>{
